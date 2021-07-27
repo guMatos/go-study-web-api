@@ -2,6 +2,9 @@ package main
 
 import (
 	"net/http"
+	"study-webapi/infra"
+
+	"study-webapi/domain"
 
 	"github.com/gin-gonic/gin"
 )
@@ -15,8 +18,8 @@ func main() {
 }
 
 func getAlbums(c *gin.Context) {
-	repo := repository{}
-	albuns, err := repo.getAlbums()
+	repo := infra.Repository{}
+	albuns, err := repo.GetAlbums()
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 	}
@@ -29,14 +32,14 @@ func getAlbums(c *gin.Context) {
 }
 
 func addAlbum(c *gin.Context) {
-	repo := repository{}
-	var newAlbum album
+	repo := infra.Repository{}
+	var newAlbum domain.Album
 
 	if err := c.BindJSON(&newAlbum); err != nil {
 		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 	}
 
-	err := repo.addAlbum(newAlbum)
+	err := repo.AddAlbum(newAlbum)
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 	}

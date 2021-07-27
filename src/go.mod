@@ -1,4 +1,4 @@
-module study/web-api
+module study-webapi
 
 go 1.16
 

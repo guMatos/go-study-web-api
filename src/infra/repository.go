@@ -1,4 +1,4 @@
-package main
+package infra
 
 import (
 	"encoding/json"
@@ -6,11 +6,13 @@ import (
 	"os"
 
 	"github.com/sirupsen/logrus"
+
+	"study-webapi/domain"
 )
 
-type repository struct{}
+type Repository struct{}
 
-func (r repository) getAlbums() ([]album, error) {
+func (r Repository) GetAlbums() ([]domain.Album, error) {
 	filename := "albums.json"
 	err := checkFile(filename)
 	if err != nil {
@@ -23,17 +25,17 @@ func (r repository) getAlbums() ([]album, error) {
 		return nil, err
 	}
 
-	var albums []album
+	var albums []domain.Album
 
 	json.Unmarshal(file, &albums)
 
 	return albums, nil
 }
 
-func (r repository) addAlbum(element album) error {
+func (r Repository) AddAlbum(element domain.Album) error {
 	filename := "albums.json"
 
-	oldAlbums, err := r.getAlbums()
+	oldAlbums, err := r.GetAlbums()
 	newAlbums := append(oldAlbums, element)
 
 	bytes, err := json.Marshal(newAlbums)
