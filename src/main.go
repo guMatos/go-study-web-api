@@ -1,20 +1,35 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"study-webapi/infra"
 
 	"study-webapi/domain"
 
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
 )
 
 func main() {
+	viper.SetConfigFile(".env")
+	err := viper.ReadInConfig()
+	if err != nil {
+		println(err.Error())
+		return
+	}
+	port := viper.Get("PORT")
+	if port == nil {
+		println("Port number has no value")
+	}
+
 	router := gin.Default()
 	router.GET("/album", getAlbums)
 	router.POST("/album", addAlbum)
 
-	router.Run("localhost:8080")
+	environment := fmt.Sprintf("localhost:%v", port)
+
+	router.Run(environment)
 }
 
 func getAlbums(c *gin.Context) {
