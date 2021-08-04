@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"os"
 
+	uuid "github.com/satori/go.uuid"
 	"github.com/sirupsen/logrus"
 
 	"study-webapi/domain"
@@ -34,8 +35,19 @@ func (r Repository) GetAlbums() ([]domain.Album, error) {
 
 func (r Repository) AddAlbum(element domain.Album) error {
 	filename := "albums.json"
+	var uniqueId string
 
 	oldAlbums, err := r.GetAlbums()
+
+	for uniqueId == "" {
+		testId := uuid.NewV4().String()
+		containsId := containsId(oldAlbums, testId)
+
+		if !containsId {
+			uniqueId = testId
+		}
+	}
+	element.Id = uniqueId
 	newAlbums := append(oldAlbums, element)
 
 	bytes, err := json.Marshal(newAlbums)
@@ -55,4 +67,13 @@ func checkFile(filename string) error {
 		return err
 	}
 	return nil
+}
+
+func containsId(albums []domain.Album, id string) bool {
+	for _, album := range albums {
+		if album.Id == id {
+			return true
+		}
+	}
+	return false
 }
