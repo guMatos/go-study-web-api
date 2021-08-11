@@ -35,18 +35,10 @@ func (r Repository) GetAlbums() ([]domain.Album, error) {
 
 func (r Repository) AddAlbum(element domain.Album) error {
 	filename := "albums.json"
-	var uniqueId string
 
 	oldAlbums, err := r.GetAlbums()
 
-	for uniqueId == "" {
-		testId := uuid.NewV4().String()
-		containsId := containsId(oldAlbums, testId)
-
-		if !containsId {
-			uniqueId = testId
-		}
-	}
+	uniqueId := generateUniqueId(oldAlbums)
 	element.Id = uniqueId
 	newAlbums := append(oldAlbums, element)
 
@@ -67,6 +59,19 @@ func checkFile(filename string) error {
 		return err
 	}
 	return nil
+}
+
+func generateUniqueId(albums []domain.Album) string {
+	var uniqueId string
+	for uniqueId == "" {
+		testId := uuid.NewV4().String()
+		containsId := containsId(albums, testId)
+
+		if !containsId {
+			uniqueId = testId
+		}
+	}
+	return uniqueId
 }
 
 func containsId(albums []domain.Album, id string) bool {
